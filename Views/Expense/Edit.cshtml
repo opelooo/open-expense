@@ -1,0 +1,53 @@
+@using AccountingApp.Helpers
+@model AccountingApp.Models.Expense
+
+@{
+    ViewData["Title"] = "Edit Expense";
+    var paymentMethodOptions = PaymentMethodHelper.GetPaymentMethodList();
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <h2>Edit Expense</h2>
+            <form method="post" action="/Expense/Edit/@Model.Id">
+                @Html.AntiForgeryToken()
+                <div class="form-group mb-3">
+                    <label for="amount">Amount *</label>
+                    <input type="number" class="form-control" id="amount" name="amount" step="0.01" value="@Model.Amount" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="expenseDate">Tanggal Expense *</label>
+                    <input type="date" class="form-control" id="expenseDate" name="expenseDate" value="@Model.ExpenseDate.ToString("yyyy-MM-dd")" required>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="description">Deskripsi</label>
+                    <textarea class="form-control" id="description" name="description" rows="3">@(Model.Description ?? "")</textarea>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="paymentMethod">Payment Method *</label>
+                    <select class="form-control" id="paymentMethod" name="paymentMethod" required>
+                        <option value="">-- Pilih Payment Method --</option>
+                        @foreach (var method in paymentMethodOptions)
+                        {
+                            @if (Model.PaymentMethod == method.Value)
+                            {
+                                <option value="@method.Value" selected>@method.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@method.Value">@method.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Update</button>
+                <a href="/Expense" class="btn btn-secondary">Batal</a>
+            </form>
+        </div>
+    </div>
+</div>

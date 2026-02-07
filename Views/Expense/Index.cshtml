@@ -1,0 +1,175 @@
+@using AccountingApp.Models
+@using System.Linq
+@model PaginationModel<Expense>
+
+@{
+    ViewData["Title"] = "Expenses";
+}
+
+<div class="container mt-5">
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <h2>Expenses</h2>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Item per Halaman:</label>
+            <select id="pageSizeSelect" class="form-select form-select-sm" style="max-width: 120px;">
+                @{
+                    int[] pageSizes = { 5, 10, 25, 50 };
+                    foreach (int size in pageSizes)
+                    {
+                        if (Model.PageSize == size)
+                        {
+                            <option value="@size" selected>@size</option>
+                        }
+                        else
+                        {
+                            <option value="@size">@size</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="/Expense/Create" class="btn btn-primary">+ Tambah Expense</a>
+        </div>
+    </div>
+
+    <style>
+        .table-container-fixed {
+            height: 450px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 0.25rem;
+        }
+        .table-container-fixed table {
+            margin-bottom: 0;
+        }
+        .table-container-fixed thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+    </style>
+
+    @if (!Model.Items.Any())
+    {
+        <div class="alert alert-info">Belum ada expense. <a href="/Expense/Create">Tambah sekarang</a></div>
+    }
+    else
+    {
+        <div class="table-container-fixed">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Deskripsi</th>
+                        <th>Payment Method</th>
+                        <th class="text-end">Amount</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var expense in Model.Items)
+                    {
+                        <tr>
+                            <td>@expense.ExpenseDate.ToString("dd MMM yyyy")</td>
+                            <td>@expense.Description</td>
+                            <td>@expense.PaymentMethod</td>
+                            <td class="text-end">Rp @expense.Amount.ToString("N0")</td>
+                            <td class="text-center">
+                                <a href="/Expense/Edit/@expense.Id" class="btn btn-sm btn-warning">Edit</a>
+                                <form method="post" action="/Expense/Delete" style="display:inline;">
+                                    <input type="hidden" name="id" value="@expense.Id">
+                                    <button type="button" class="btn btn-sm btn-danger" onclick="confirmDelete(this)">Hapus</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <h5>Total: Rp @Model.Items.Sum(e => e.Amount).ToString("N0")</h5>
+            </div>
+            <div class="col-md-6 text-end">
+                <small class="text-muted">Menampilkan @Model.Items.Count dari @Model.TotalItems items</small>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <!-- Previous Page -->
+                    <li class="page-item @(!Model.HasPreviousPage ? "disabled" : "")">
+                        <a class="page-link" href="/Expense?page=@(Model.CurrentPage - 1)&pageSize=@Model.PageSize">Previous</a>
+                    </li>
+
+                    <!-- Page Numbers -->
+                    @{
+                        int startPage = Math.Max(1, Model.CurrentPage - 2);
+                        int endPage = Math.Min(Model.TotalPages, Model.CurrentPage + 2);
+
+                        if (startPage > 1)
+                        {
+                            <li class="page-item"><a class="page-link" href="/Expense?page=1&pageSize=@Model.PageSize">1</a></li>
+                            if (startPage > 2)
+                            {
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            }
+                        }
+
+                        for (int i = startPage; i <= endPage; i++)
+                        {
+                            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="/Expense?page=@i&pageSize=@Model.PageSize">@i</a>
+                            </li>
+                        }
+
+                        if (endPage < Model.TotalPages)
+                        {
+                            if (endPage < Model.TotalPages - 1)
+                            {
+                                <li class="page-item disabled"><span class="page-link">...</span></li>
+                            }
+                            <li class="page-item"><a class="page-link" href="/Expense?page=@Model.TotalPages&pageSize=@Model.PageSize">@Model.TotalPages</a></li>
+                        }
+                    }
+
+                    <!-- Next Page -->
+                    <li class="page-item @(!Model.HasNextPage ? "disabled" : "")">
+                        <a class="page-link" href="/Expense?page=@(Model.CurrentPage + 1)&pageSize=@Model.PageSize">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        }
+    }
+</div>
+
+<script>
+    document.getElementById('pageSizeSelect').addEventListener('change', function() {
+        const pageSize = this.value;
+        window.location.href = `/Expense?page=1&pageSize=${pageSize}`;
+    });
+
+    function confirmDelete(btn) {
+        Swal.fire({
+            title: 'Hapus Expense?',
+            text: 'Anda yakin ingin menghapus expense ini?',
+            icon: 'question',
+            confirmButtonText: 'Ya, Hapus',
+            cancelButtonText: 'Batal',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                btn.form.submit();
+            }
+        });
+    }
+</script>

@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>9caebf7f-b0a3-4a70-b061-b6475566db8a</UserSecretsId>
+    <RootNamespace>OpenExpenseApp</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

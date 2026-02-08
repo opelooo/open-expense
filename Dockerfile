@@ -1,27 +1,28 @@
-# 1. Use the build machine's native platform for the SDK stage (fast)
+# 1. Build Stage (Native AMD64)
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 ARG TARGETARCH
 WORKDIR /src
 
-RUN apk add --no-cache icu-libs icu-data-full
-
-# Copy and Restore specifically for the target architecture (ARM64)
 COPY ["OpenExpenseApp.csproj", "./"]
 RUN dotnet restore "OpenExpenseApp.csproj" -a $TARGETARCH
 
-# Copy all files and Publish for ARM64
 COPY . .
 RUN dotnet publish "OpenExpenseApp.csproj" -c Release -o /app/publish -a $TARGETARCH --self-contained false
 
-# 2. Final stage: Use the actual ARM64 runtime image
-FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS final
+# 2. Final Stage (Target ARM64)
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS final
 WORKDIR /app
-
-# Install ICU libraries in the final runtime image
-RUN apk add --no-cache icu-libs icu-data-full
-
 COPY --from=build /app/publish .
+
+# Kita gunakan user root sementara agar bisa install library saat startup
+USER root
+
+# Script untuk install ICU hanya jika belum ada, lalu jalankan App
+RUN echo '#!/bin/sh' > /entrypoint.sh && \
+    echo 'if ! apk info -e icu-libs; then apk add --no-cache icu-libs icu-data-full; fi' >> /entrypoint.sh && \
+    echo 'exec dotnet OpenExpenseApp.dll "$@"' >> /entrypoint.sh && \
+    chmod +x /entrypoint.sh
 
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 
-ENTRYPOINT ["dotnet", "OpenExpenseApp.dll"]
+ENTRYPOINT ["/entrypoint.sh"]

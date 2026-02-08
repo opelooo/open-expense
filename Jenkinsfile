@@ -4,7 +4,7 @@ pipeline {
     environment {
         DB_CONNECTION = credentials('DB_CONNECTION_STRING')
         DOCKER_IMAGE_NAME = "open-expense"
-        DOCKER_TAG = "latest"
+        DOCKER_TAG = "latest-arm64"
         REGISTRY_SERVER = "registry.opeloooco.uk"
         REG_AUTH = credentials('REGISTRY_AUTH')
     }
@@ -35,11 +35,11 @@ pipeline {
                     sh 'echo ${REG_AUTH_PSW} | docker login ${REGISTRY_SERVER} -u ${REG_AUTH_USR} --password-stdin'
                     
                     // Build dengan format: registry.opeloooco.uk/open-expense:latest
-                    sh "docker build -t ${REGISTRY_SERVER}/${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ."
+                    // sh "docker build -t ${REGISTRY_SERVER}/${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ."
+                    sh "docker buildx build --platform linux/arm64 -t ${REGISTRY_SERVER}/${DOCKER_IMAGE_NAME}:${DOCKER_TAG} --push ."
                     
                     // Push ke registry
                     sh "docker push ${REGISTRY_SERVER}/${DOCKER_IMAGE_NAME}:${DOCKER_TAG}"
-                    // sh "docker buildx build --platform linux/arm64 -t ${REGISTRY_SERVER}/${DOCKER_IMAGE_NAME}:${DOCKER_TAG} --push ."
                 }
             }
         }
@@ -62,7 +62,7 @@ pipeline {
                     sh """
                         podman run -d \
                         --name open-expense \
-                        -p 3001:8080 \
+                        -p 3000:8080 \
                         -e ConnectionStrings__DefaultConnection='${DB_CONNECTION}' \
                         -e ASPNETCORE_ENVIRONMENT=Production \
                         --restart always \

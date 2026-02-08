@@ -43,7 +43,7 @@ pipeline {
                     sh """
                         docker run -d \
                         --name open-expense \
-                        -p 5191:8080 \
+                        -p 3001:8080 \
                         -e ConnectionStrings__DefaultConnection='${DB_CONNECTION}' \
                         -e ASPNETCORE_ENVIRONMENT=Production \
                         ${DOCKER_IMAGE}

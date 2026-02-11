@@ -9,8 +9,8 @@
     <p class="text-muted">Overview of your expenses</p>
 </div>
 
-<!-- Skeleton Loading -->
-<partial name="_DashboardSkeleton" />
+<!-- Skeleton Loading (Reusable Component) -->
+<partial name="_Skeleton" />
 
 <!-- Actual Dashboard Content -->
 <div id="dashboard-content">
@@ -187,18 +187,11 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Show skeleton initially, hide content
-        const skeleton = document.getElementById('dashboard-skeleton');
+        // Hide skeleton, show content immediately
+        const skeleton = document.getElementById('skeleton-loading');
         const content = document.getElementById('dashboard-content');
         
-        // Small delay to allow skeleton to render before showing
-        setTimeout(function() {
-            // Add fade-in animation to content
-            content.classList.add('fade-in');
-            content.classList.add('loaded');
-            
-            // Hide skeleton with display none
-            skeleton.style.display = 'none';
-        }, 500); // 500ms delay for skeleton animation
+        if (skeleton) skeleton.style.display = 'none';
+        content.classList.add('fade-in', 'loaded');
     });
 </script>

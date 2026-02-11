@@ -502,10 +502,19 @@ html {
   display: block;
 }
 
+#skeleton-loading {
+  display: block;
+}
+
 #dashboard-content {
   display: none;
 }
 
-#dashboard-content.loaded {
+#expenses-content {
+  display: none;
+}
+
+#dashboard-content.loaded,
+#expenses-content.loaded {
   display: block;
 }

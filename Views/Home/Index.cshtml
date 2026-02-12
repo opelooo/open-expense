@@ -1,4 +1,5 @@
 ﻿@using System.Globalization
+@using AccountingApp.Views.Shared.Components
 @model DashboardViewModel
 @{
     ViewData["Title"] = "Dashboard";
@@ -16,172 +17,76 @@
 <div id="dashboard-content">
     <!-- Summary Cards -->
     <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <div>
-                            <p class="text-muted mb-1">Total Expenses</p>
-                            <h4 class="mb-0">@Model.TotalExpenses.ToString("C")</h4>
-                        </div>
-                        <div class="bg-primary bg-opacity-10 p-2 rounded flex-shrink-0 custom-icon">
-                            <i class="bi bi-wallet2 text-primary"></i>
-                        </div>
-                    </div>
-                    <small class="text-muted mt-auto">@Model.TotalExpenseCount transactions</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <div>
-                            <p class="text-muted mb-1">Today</p>
-                            <h4 class="mb-0">@Model.TodayExpenses.ToString("C")</h4>
-                        </div>
-                        <div class="bg-success bg-opacity-10 p-2 rounded flex-shrink-0 custom-icon">
-                            <i class="bi bi-calendar-day text-success"></i>
-                        </div>
-                    </div>
-                    <small class="text-muted mt-auto">@DateTime.Today.ToString("MMM dd, yyyy")</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <div>
-                            <p class="text-muted mb-1">This Month</p>
-                            <h4 class="mb-0">@Model.ThisMonthExpenses.ToString("C")</h4>
-                        </div>
-                        <div class="bg-info bg-opacity-10 p-2 rounded flex-shrink-0 custom-icon">
-                            <i class="bi bi-calendar-month text-info"></i>
-                        </div>
-                    </div>
-                    <small class="text-muted mt-auto">@DateTime.Now.ToString("MMMM yyyy")</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <div>
-                            <p class="text-muted mb-1">Avg. Per Day</p>
-                            <h4 class="mb-0">@Model.AvgPerDay.ToString("C")</h4>
-                        </div>
-                        <div class="bg-warning bg-opacity-10 p-2 rounded flex-shrink-0 custom-icon">
-                            <i class="bi bi-graph-up-arrow text-warning"></i>
-                        </div>
-                    </div>
-                    <small class="text-muted mt-auto">This month average</small>
-                </div>
-            </div>
-        </div>
+        @await Component.InvokeAsync("SummaryCard", new {
+            title = "Total Expenses",
+            value = Model.TotalExpenses.ToString("C"),
+            iconClass = "bi bi-wallet2 text-primary",
+            iconBgClass = "bg-primary bg-opacity-10",
+            subtitle = $"{Model.TotalExpenseCount} transactions"
+        })
+        @await Component.InvokeAsync("SummaryCard", new {
+            title = "Today",
+            value = Model.TodayExpenses.ToString("C"),
+            iconClass = "bi bi-calendar-day text-success",
+            iconBgClass = "bg-success bg-opacity-10",
+            subtitle = DateTime.Today.ToString("MMM dd, yyyy")
+        })
+        @await Component.InvokeAsync("SummaryCard", new {
+            title = "This Month",
+            value = Model.ThisMonthExpenses.ToString("C"),
+            iconClass = "bi bi-calendar-month text-info",
+            iconBgClass = "bg-info bg-opacity-10",
+            subtitle = DateTime.Now.ToString("MMMM yyyy")
+        })
+        @await Component.InvokeAsync("SummaryCard", new {
+            title = "Avg. Per Day",
+            value = Model.AvgPerDay.ToString("C"),
+            iconClass = "bi bi-graph-up-arrow text-warning",
+            iconBgClass = "bg-warning bg-opacity-10",
+            subtitle = "This month average"
+        })
     </div>
 
     <div class="row g-3 mb-4">
         <!-- Recent Expenses -->
-        <div class="col-md-8">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header py-3">
-                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Expenses</h5>
-                </div>
-                <div class="card-body p-0">
-                    @if (Model.RecentExpenses.Any())
-                    {
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-header">
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Description</th>
-                                        <th>Payment Method</th>
-                                        <th class="text-end">Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (Expense expense in Model.RecentExpenses)
-                                    {
-                                        <tr>
-                                            <td>@expense.ExpenseDate.ToString("MMM dd, yyyy")</td>
-                                            <td>@(expense.Description ?? "-")</td>
-                                            <td>
-                                                <span class="badge bg-secondary">
-                                                    <i class="bi bi-credit-card me-1"></i>@expense.PaymentMethod
-                                                </span>
-                                            </td>
-                                            <td class="text-end fw-semibold">@expense.Amount.ToString("C")</td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="text-center py-5 text-muted">
-                            <i class="bi bi-receipt fs-1 d-block mb-2"></i>
-                            No expenses found
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
+        @await Component.InvokeAsync("DataCard", new {
+            title = "Recent Expenses",
+            iconClass = "bi bi-clock-history",
+            items = Model.RecentExpenses,
+            emptyMessage = "No expenses found"
+        })
 
         <!-- Expenses by Payment Method -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header py-3">
-                    <h5 class="mb-0"><i class="bi bi-pie-chart me-2"></i>By Payment Method</h5>
-                </div>
-                <div class="card-body">
-                    @if (Model.ExpensesByPaymentMethodPercent.Any())
-                    {
-                        @foreach (var method in Model.ExpensesByPaymentMethodPercent.OrderByDescending(x => x.Value))
-                        {
-                            var percentage = method.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between mb-1">
-                                    <span class="text-muted">@method.Key</span>
-                                    <span class="fw-semibold">@Model.ExpensesByPaymentMethod[method.Key].ToString("C")</span>
-                                </div>
-                                <div class="progress" style="height: 8px;">
-                                    <div class="progress-bar bg-primary" style="width: @percentage%;"></div>
-                                </div>
-                                <small class="text-muted">@method.Value.ToString("F1")%</small>
-                            </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="text-center py-5 text-muted">
-                            <i class="bi bi-credit-card fs-1 d-block mb-2"></i>
-                            No data available
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
+        @await Component.InvokeAsync("ProgressCard", new {
+            title = "By Payment Method",
+            iconClass = "bi bi-pie-chart",
+            items = Model.ExpensesByPaymentMethod,
+            emptyMessage = "No data available"
+        })
     </div>
 
     <!-- Quick Actions -->
     <div class="row g-3">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h5 class="mb-3"><i class="bi bi-lightning me-2"></i>Quick Actions</h5>
-                    <a asp-controller="Expense" asp-action="Create" asp-route-returnUrl="/Home" class="btn btn-primary me-2">
-                        <i class="bi bi-plus-lg me-1"></i>Add Expense
-                    </a>
-                    <a asp-controller="Expense" asp-action="Index" class="btn btn-outline-secondary">
-                        <i class="bi bi-list me-1"></i>View All Expenses
-                    </a>
-                </div>
-            </div>
-        </div>
+        @await Component.InvokeAsync("QuickActions", new {
+            actions = new List<QuickActionItem>
+            {
+                new QuickActionItem {
+                    Text = "Add Expense",
+                    IconClass = "bi bi-plus-lg",
+                    Controller = "Expense",
+                    Action = "Create",
+                    ReturnUrl = "/Home",
+                    CssClass = "btn-primary"
+                },
+                new QuickActionItem {
+                    Text = "View All Expenses",
+                    IconClass = "bi bi-list",
+                    Controller = "Expense",
+                    Action = "Index",
+                    CssClass = "btn-outline-secondary"
+                }
+            }
+        })
     </div>
 </div>
 

@@ -1,0 +1,35 @@
+@model AccountingApp.Views.Shared.Components.ProgressCardViewModel
+
+<div class="col-md-4">
+    <div class="card border-0 shadow-sm h-100">
+        <div class="card-header py-3">
+            <h5 class="mb-0"><i class="@Model.IconClass me-2"></i>@Model.Title</h5>
+        </div>
+        <div class="card-body">
+            @if (Model.Items.Any())
+            {
+                @foreach (var method in Model.PercentItems.OrderByDescending(x => x.Value))
+                {
+                    var percentage = method.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted">@method.Key</span>
+                            <span class="fw-semibold">@Model.Items[method.Key].ToString("C")</span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-primary" style="width: @percentage%;"></div>
+                        </div>
+                        <small class="text-muted">@method.Value.ToString("F1")%</small>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-credit-card fs-1 d-block mb-2"></i>
+                    @Model.EmptyMessage
+                </div>
+            }
+        </div>
+    </div>
+</div>

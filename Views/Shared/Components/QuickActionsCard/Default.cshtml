@@ -1,0 +1,16 @@
+@model AccountingApp.Views.Shared.Components.QuickActionsCardViewModel
+
+<div class="col-12">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <h5 class="mb-3"><i class="bi bi-lightning me-2"></i>Quick Actions</h5>
+            @foreach (var action in Model.Actions)
+            {
+                <a asp-controller="@action.Controller" asp-action="@action.Action" asp-route-returnUrl="@action.ReturnUrl"
+                       class="btn @action.CssClass me-2 mb-2">
+                    <i class="@action.IconClass me-1"></i>@action.Text
+                </a>
+            }
+        </div>
+    </div>
+</div>

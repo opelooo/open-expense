@@ -1,0 +1,48 @@
+@model AccountingApp.Views.Shared.Components.DataCardViewModel
+
+<div class="col-md-8">
+    <div class="card border-0 shadow-sm">
+        <div class="card-header py-3">
+            <h5 class="mb-0"><i class="@Model.IconClass me-2"></i>@Model.Title</h5>
+        </div>
+        <div class="card-body p-0">
+            @if (Model.Items.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-header">
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Payment Method</th>
+                                <th class="text-end">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (dynamic item in Model.Items)
+                            {
+                                <tr>
+                                    <td>@item.ExpenseDate.ToString("MMM dd, yyyy")</td>
+                                    <td>@(item.Description ?? "-")</td>
+                                    <td>
+                                        <span class="badge bg-secondary">
+                                            <i class="bi bi-credit-card me-1"></i>@item.PaymentMethod
+                                        </span>
+                                    </td>
+                                    <td class="text-end fw-semibold">@item.Amount.ToString("C")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-receipt fs-1 d-block mb-2"></i>
+                    @Model.EmptyMessage
+                </div>
+            }
+        </div>
+    </div>
+</div>

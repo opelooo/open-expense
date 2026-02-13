@@ -1,4 +1,3 @@
-using OpenExpenseApp.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace OpenExpenseApp.Utils

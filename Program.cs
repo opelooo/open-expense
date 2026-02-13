@@ -1,11 +1,11 @@
 using System.Globalization;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using OpenExpenseApp.Data;
 using OpenExpenseApp.Interfaces;
 using OpenExpenseApp.Middleware;
 using OpenExpenseApp.Repositories;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 

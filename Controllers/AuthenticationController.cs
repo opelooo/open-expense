@@ -1,11 +1,8 @@
 using System.Diagnostics;
-using OpenExpenseApp.Data;
+using Microsoft.AspNetCore.Mvc;
 using OpenExpenseApp.Interfaces;
 using OpenExpenseApp.Models;
-using OpenExpenseApp.Repositories;
 using OpenExpenseApp.Utils;
-using BCrypt.Net;
-using Microsoft.AspNetCore.Mvc;
 
 namespace OpenExpenseApp.Controllers;
 

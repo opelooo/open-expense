@@ -1,7 +1,6 @@
 using OpenExpenseApp.Data;
 using OpenExpenseApp.Interfaces;
 using OpenExpenseApp.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace OpenExpenseApp.Repositories
 {

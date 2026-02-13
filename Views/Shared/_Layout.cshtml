@@ -42,10 +42,10 @@
                                     <a class="nav-link" asp-area="" asp-controller="Expense" asp-action="Index">Expenses</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                                    <a class="nav-link" asp-area="" asp-controller="Income" asp-action="Index">Incomes</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Income" asp-action="Index">Incomes</a>
+                                    <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                                 </li>
                             </ul>
                         </div>
@@ -99,23 +99,23 @@
                     const isDarkMode = currentTheme === 'dark';
 
                     Swal.fire({
-                    title: alertConfig.title || 'Info',
-                    text: alertConfig.message || '',
-                    icon: alertConfig.icon || 'info',
-                    confirmButtonText: alertConfig.confirmButtonText || 'OK',
-                    cancelButtonText: alertConfig.cancelButtonText || 'Cancel',
-                    showCancelButton: alertConfig.showCancelButton || false,
-                    showConfirmButton: alertConfig.showConfirmButton !== false,
-                    allowOutsideClick: alertConfig.allowOutsideClick !== false,
-                    allowEscapeKey: alertConfig.allowEscapeKey !== false,
-                    timer: alertConfig.timer || undefined,
-                    timerProgressBar: alertConfig.timer ? true : false,
-                    // Dark mode configuration
-                    background: isDarkMode ? '#2c3034' : '#ffffff',
-                    color: isDarkMode ? '#f8f9fa' : '#212529',
-                    confirmButtonColor: '#0d6efd',
-                    cancelButtonColor: '#6c757d',
-                    iconColor: isDarkMode ? '#6ea8fe' : undefined
+                        title: alertConfig.title || 'Info',
+                        text: alertConfig.message || '',
+                        icon: alertConfig.icon || 'info',
+                        confirmButtonText: alertConfig.confirmButtonText || 'OK',
+                        cancelButtonText: alertConfig.cancelButtonText || 'Cancel',
+                        showCancelButton: alertConfig.showCancelButton || false,
+                        showConfirmButton: alertConfig.showConfirmButton !== false,
+                        allowOutsideClick: alertConfig.allowOutsideClick !== false,
+                        allowEscapeKey: alertConfig.allowEscapeKey !== false,
+                        timer: alertConfig.timer || undefined,
+                        timerProgressBar: alertConfig.timer ? true : false,
+                        // Dark mode configuration
+                        background: isDarkMode ? '#2c3034' : '#ffffff',
+                        color: isDarkMode ? '#f8f9fa' : '#212529',
+                        confirmButtonColor: '#0d6efd',
+                        cancelButtonColor: '#6c757d',
+                        iconColor: isDarkMode ? '#6ea8fe' : undefined
                     });
                 });
             </script>

@@ -1,0 +1,78 @@
+@model DashboardViewModel
+@using OpenExpenseApp.Views.Shared.Components
+<!-- Actual Dashboard Content -->
+<div id="dashboard-content">
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+        @await Component.InvokeAsync("SummaryCard", new {
+            title = "Total Expenses",
+            value = Model.TotalExpenses.ToString("C"),
+            iconClass = "bi bi-wallet2 text-primary",
+            iconBgClass = "bg-primary bg-opacity-10",
+            subtitle = $"{Model.TotalExpenseCount} transactions"
+        })
+        @await Component.InvokeAsync("SummaryCard", new {
+            title = "Today",
+            value = Model.TodayExpenses.ToString("C"),
+            iconClass = "bi bi-calendar-day text-success",
+            iconBgClass = "bg-success bg-opacity-10",
+            subtitle = DateTime.Today.ToString("MMM dd, yyyy")
+        })
+        @await Component.InvokeAsync("SummaryCard", new {
+            title = "This Month",
+            value = Model.ThisMonthExpenses.ToString("C"),
+            iconClass = "bi bi-calendar-month text-info",
+            iconBgClass = "bg-info bg-opacity-10",
+            subtitle = DateTime.Now.ToString("MMMM yyyy")
+        })
+        @await Component.InvokeAsync("SummaryCard", new {
+            title = "Avg. Per Day",
+            value = Model.AvgPerDay.ToString("C"),
+            iconClass = "bi bi-graph-up-arrow text-warning",
+            iconBgClass = "bg-warning bg-opacity-10",
+            subtitle = "This month average"
+        })
+    </div>
+
+    <div class="row g-3 mb-4">
+        <!-- Recent Expenses -->
+        @await Component.InvokeAsync("DataCard", new {
+            title = "Recent Expenses",
+            iconClass = "bi bi-clock-history",
+            items = Model.RecentExpenses,
+            emptyMessage = "No expenses found"
+        })
+
+        <!-- Expenses by Payment Method -->
+        @await Component.InvokeAsync("ProgressCard", new {
+            title = "By Payment Method",
+            iconClass = "bi bi-pie-chart",
+            items = Model.ExpensesByPaymentMethod,
+            emptyMessage = "No data available"
+        })
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row g-3">
+        @await Component.InvokeAsync("QuickActions", new {
+            actions = new List<QuickActionItem>
+            {
+                new QuickActionItem {
+                    Text = "Add Expense",
+                    IconClass = "bi bi-plus-lg",
+                    Controller = "Expense",
+                    Action = "Create",
+                    ReturnUrl = "/Home",
+                    CssClass = "btn-primary"
+                },
+                new QuickActionItem {
+                    Text = "View All Expenses",
+                    IconClass = "bi bi-list",
+                    Controller = "Expense",
+                    Action = "Index",
+                    CssClass = "btn-outline-secondary"
+                }
+            }
+        })
+    </div>
+</div>

@@ -1,7 +1,7 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using OpenExpenseApp.Interfaces;
 using OpenExpenseApp.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace OpenExpenseApp.Controllers;
 
@@ -22,52 +22,35 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
         if (HttpContext.Session.GetString("UserId") == null)
-        {
             return RedirectToAction("Index", "Authentication");
-        }
 
-        var userId = HttpContext.Session.GetString("UserId")!;
-        var today = DateTime.Today;
-        var startOfMonth = new DateTime(today.Year, today.Month, 1);
-        var endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+        return View();
+    }
 
-        // Get user's expenses
-        var userExpenses = await _userExpenseRepository.GetByUserIdAsync(userId);
-        var userExpenseList = userExpenses.ToList();
-        var expenses = userExpenseList.Select(ue => ue.Expense).OfType<Expense>().ToList();
-
-        var todayExpenses = expenses.Where(e => e.ExpenseDate.Date == today.Date);
-        var monthExpenses = expenses.Where(e =>
-            e.ExpenseDate.Date >= startOfMonth && e.ExpenseDate.Date <= endOfMonth
-        );
-
-        var totalExpenses = expenses.Sum(e => e.Amount);
-        var thisMonthExpenses = monthExpenses.Sum(e => e.Amount);
-        var daysInMonth = DateTime.DaysInMonth(today.Year, today.Month);
-        var avgPerDay = daysInMonth > 0 ? thisMonthExpenses / daysInMonth : 0;
-
-        // Calculate percentage for each payment method
-        var expensesByPaymentMethod = expenses
-            .GroupBy(e => e.PaymentMethod)
-            .ToDictionary(g => g.Key, g => g.Sum(e => e.Amount));
-        var expensesByPaymentMethodPercent = expensesByPaymentMethod.ToDictionary(
-            kvp => kvp.Key,
-            kvp => totalExpenses > 0 ? (double)(kvp.Value / totalExpenses * 100) : 0
-        );
-
-        var dashboardViewModel = new DashboardViewModel
+    [HttpPost]
+    public IActionResult RenderDashboardPartial([FromBody] System.Text.Json.JsonElement rawData)
+    {
+        try
         {
-            TotalExpenses = totalExpenses,
-            TodayExpenses = todayExpenses.Sum(e => e.Amount),
-            ThisMonthExpenses = thisMonthExpenses,
-            AvgPerDay = avgPerDay,
-            TotalExpenseCount = expenses.Count(),
-            RecentExpenses = expenses.OrderByDescending(e => e.ExpenseDate).Take(10),
-            ExpensesByPaymentMethod = expensesByPaymentMethod,
-            ExpensesByPaymentMethodPercent = expensesByPaymentMethodPercent,
-        };
+            // Menggunakan JsonElement + Deserialize manual untuk menghindari NullReference
+            var options = new System.Text.Json.JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            var model = System.Text.Json.JsonSerializer.Deserialize<DashboardViewModel>(
+                rawData.GetRawText(),
+                options
+            );
 
-        return View(dashboardViewModel);
+            if (model == null)
+                return BadRequest("Data model kosong");
+
+            return PartialView("_DashboardContent", model);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
     }
 
     public IActionResult Privacy()

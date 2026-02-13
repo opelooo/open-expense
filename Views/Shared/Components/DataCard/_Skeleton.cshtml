@@ -1,0 +1,14 @@
+@{
+    Layout = null;
+}
+<div class="card border-0 shadow-sm">
+    <div class="card-header py-3">
+        <div class="skeleton skeleton-text title"></div>
+    </div>
+    <div class="card-body p-0 skeleton-table" style="padding: 1rem;">
+        @for (int i = 0; i < 5; i++)
+        {
+            <div class="skeleton skeleton-text"></div>
+        }
+    </div>
+</div>

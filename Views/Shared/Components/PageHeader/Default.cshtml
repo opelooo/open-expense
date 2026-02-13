@@ -1,0 +1,9 @@
+@model OpenExpenseApp.Views.Shared.Components.PageHeaderViewModel
+
+<div class="mb-4">
+    <h1 class="h3 mb-0 text-gray-800">@Model.Title</h1>
+    @if (!string.IsNullOrEmpty(Model.Subtitle))
+    {
+        <p class="text-muted">@Model.Subtitle</p>
+    }
+</div>

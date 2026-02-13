@@ -1,0 +1,15 @@
+@model OpenExpenseApp.Views.Shared.Components.EmptyStateViewModel
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body text-center py-5">
+        <i class="@Model.IconClass fs-1 text-muted d-block mb-3"></i>
+        <h5>@Model.Title</h5>
+        <p class="text-muted">@Model.Message</p>
+        @if (!string.IsNullOrEmpty(Model.ActionUrl))
+        {
+            <a href="@Model.ActionUrl" class="btn @Model.ActionCssClass">
+                <i class="bi bi-plus-lg me-1"></i>@Model.ActionText
+            </a>
+        }
+    </div>
+</div>

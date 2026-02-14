@@ -57,7 +57,7 @@ public class ExpenseController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(
-        decimal amount,
+        string amount,
         DateTime expenseDate,
         string? description,
         string paymentMethod,
@@ -68,7 +68,22 @@ public class ExpenseController : Controller
         var userId = HttpContext.Session.GetString("UserId")!;
         Console.WriteLine($"[DEBUG] Return URL: {returnUrl}");
 
-        if (amount <= 0)
+        // Parse amount dengan InvariantCulture untuk menghindari masalah kultur
+        if (
+            !decimal.TryParse(
+                amount,
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out var parsedAmount
+            )
+        )
+        {
+            SweetAlert.Error(TempData, "Input Gagal", "Amount tidak valid");
+            ViewBag.ReturnUrl = returnUrl;
+            return View();
+        }
+
+        if (parsedAmount <= 0)
         {
             SweetAlert.Error(TempData, "Input Gagal", "Amount harus lebih dari 0");
             ViewBag.ReturnUrl = returnUrl;
@@ -85,7 +100,7 @@ public class ExpenseController : Controller
         var expense = new Expense
         {
             Id = Ulid.NewUlid().ToString(),
-            Amount = amount,
+            Amount = parsedAmount,
             ExpenseDate = expenseDate,
             Description = description,
             PaymentMethod = paymentMethod,
@@ -106,7 +121,7 @@ public class ExpenseController : Controller
         await _userExpenseRepository.CreateAsync(userExpense);
 
         _logger.LogInformation(
-            $"Expense dengan amount {amount} berhasil ditambahkan untuk user {userId}"
+            $"Expense dengan amount {parsedAmount} berhasil ditambahkan untuk user {userId}"
         );
         SweetAlert.Success(TempData, "Pembuatan Berhasil", "Expense berhasil ditambahkan.");
         // Gunakan LocalRedirect untuk URL mentah (path) agar aman dari Open Redirect Attack
@@ -152,7 +167,7 @@ public class ExpenseController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(
         string id,
-        decimal amount,
+        string amount,
         DateTime expenseDate,
         string? description,
         string paymentMethod
@@ -182,13 +197,27 @@ public class ExpenseController : Controller
             return RedirectToAction("Index");
         }
 
-        if (amount <= 0)
+        // Parse amount dengan InvariantCulture untuk menghindari masalah kultur
+        if (
+            !decimal.TryParse(
+                amount,
+                System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out var parsedAmount
+            )
+        )
+        {
+            SweetAlert.Error(TempData, "Input Gagal", "Amount tidak valid");
+            return View(expense);
+        }
+
+        if (parsedAmount <= 0)
         {
             SweetAlert.Error(TempData, "Input Gagal", "Amount harus lebih dari 0");
             return View(expense);
         }
 
-        expense.Amount = amount;
+        expense.Amount = parsedAmount;
         expense.ExpenseDate = expenseDate;
         expense.Description = description;
         expense.PaymentMethod = paymentMethod;

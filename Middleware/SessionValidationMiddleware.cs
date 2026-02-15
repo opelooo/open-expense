@@ -8,8 +8,8 @@ namespace OpenExpenseApp.Middleware
         private readonly ILogger<SessionValidationMiddleware> _logger;
 
         // Tambahkan system paths agar tidak kena redirect
-        private static readonly string[] PublicPaths = new[]
-        {
+        private static readonly string[] PublicPaths =
+        [
             "/authentication",
             "/css",
             "/js",
@@ -17,7 +17,7 @@ namespace OpenExpenseApp.Middleware
             "/_framework", // .NET internal
             "/_vs", // Visual Studio internal
             "/.well-known", // Browser dev tools
-        };
+        ];
 
         public SessionValidationMiddleware(
             RequestDelegate next,
